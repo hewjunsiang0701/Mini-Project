@@ -1,1 +1,29 @@
+class PaymentSystem {
+public:
+    void payment() {
+        int choice;
+        cout << "Select Payment Method:\n";
+        cout << "1. Touch 'n Go\n";
+        cout << "2. Online Banking\n";
+        cout << "Enter your choice (1 or 2): ";
+        cin >> choice;
 
+        switch (choice) {
+            case 1:
+                cout << "Payment via Touch 'n Go successful!" << endl;
+                break;
+            case 2:
+                cout << "Payment via Online Banking successful!" << endl;
+                break;
+            default:
+                cout << "Invalid choice! Please select 1 or 2." << endl;
+                break;
+        }
+    }
+};
+
+int main() {
+    PaymentSystem paymentSystem;
+    paymentSystem.payment();
+    return 0;
+}
