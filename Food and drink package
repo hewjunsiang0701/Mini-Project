@@ -1,1 +1,164 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <limits>
+using namespace std;
 
+class FoodOrder {
+public:
+    string itemName;
+    int quantity;
+    double price;
+
+    FoodOrder(string name, int qty, double p) : itemName(name), quantity(qty), price(p) {}
+    double getTotal() const { return quantity * price; }
+    void display() const {
+        cout << left << setw(20) << itemName 
+             << "x" << setw(3) << quantity 
+             << "$ " << fixed << setprecision(2) << getTotal() << endl;
+    }
+};
+
+class FoodMenu {
+private:
+    struct MenuItem {
+        string name;
+        double price;
+    };
+    vector<MenuItem> foods;
+    vector<MenuItem> drinks;
+    vector<FoodOrder> orders;
+
+public:
+    FoodMenu() {
+        foods = {
+            {"Popcorn (Large)", 7.99},
+            {"Popcorn (Medium)", 6.99},
+            {"Nachos", 5.99},
+            {"Hot Dog", 4.99}
+        };
+        drinks = {
+            {"Soda (Large)", 4.99},
+            {"Soda (Medium)", 3.99},
+            {"Water", 2.99},
+            {"Coffee", 3.49}
+        };
+    }
+
+    void displayMenu() const {
+        cout << "\n=== FOOD MENU ===\n";
+        for (size_t i = 0; i < foods.size(); i++) {
+            cout << i + 1 << ". " << left << setw(20) << foods[i].name 
+                 << "$ " << fixed << setprecision(2) << foods[i].price << endl;
+        }
+        
+        cout << "\n=== DRINKS ===\n";
+        for (size_t i = 0; i < drinks.size(); i++) {
+            cout << i + foods.size() + 1 << ". " << left << setw(20) << drinks[i].name 
+                 << "$ " << fixed << setprecision(2) << drinks[i].price << endl;
+        }
+    }
+
+    bool addOrder(int choice, int quantity) {
+        if (choice <= 0 || choice > foods.size() + drinks.size()) {
+            return false;
+        }
+
+        if (choice <= foods.size()) {
+            orders.push_back(FoodOrder(foods[choice-1].name, quantity, foods[choice-1].price));
+        } else {
+            int drinkIndex = choice - foods.size() - 1;
+            orders.push_back(FoodOrder(drinks[drinkIndex].name, quantity, drinks[drinkIndex].price));
+        }
+        return true;
+    }
+
+    double getOrderTotal() const {
+        double total = 0;
+        for (const auto& order : orders) {
+            total += order.getTotal();
+        }
+        return total;
+    }
+
+    void displayOrder() const {
+        if (orders.empty()) {
+            cout << "No items ordered.\n";
+            return;
+        }
+
+        cout << "\n=== YOUR ORDER ===\n";
+        for (const auto& order : orders) {
+            order.display();
+        }
+        cout << "Total: $ " << fixed << setprecision(2) << getOrderTotal() << endl;
+    }
+};
+
+int getIntInput(const string& prompt) {
+    int input;
+    while (true) {
+        cout << prompt;
+        if (cin >> input) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return input;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a number.\n";
+    }
+}
+
+int main() {
+    FoodMenu menu;
+    int choice;
+
+    do {
+        cout << "\n1. View Menu\n"
+             << "2. Place Order\n"
+             << "3. View Current Order\n"
+             << "4. Exit\n";
+        
+        choice = getIntInput("Enter choice: ");
+
+        switch (choice) {
+            case 1:
+                menu.displayMenu();
+                break;
+
+            case 2: {
+                char orderMore;
+                do {
+                    menu.displayMenu();
+                    int itemChoice = getIntInput("Enter item number: ");
+                    int quantity = getIntInput("Enter quantity: ");
+                    
+                    if (menu.addOrder(itemChoice, quantity)) {
+                        cout << "Item added to order.\n";
+                    } else {
+                        cout << "Invalid item number!\n";
+                    }
+
+                    cout << "Order more? (y/n): ";
+                    cin >> orderMore;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                } while (orderMore == 'y' || orderMore == 'Y');
+                break;
+            }
+
+            case 3:
+                menu.displayOrder();
+                break;
+
+            case 4:
+                cout << "Thank you for using our food ordering system!\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please enter a number between 1 and 4.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
