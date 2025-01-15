@@ -1,1 +1,137 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <limits>
+using namespace std;
 
+class Seat {
+private:
+    bool isBooked;
+    int seatNumber;
+    string category;
+    double price;
+public:
+    Seat(int num, string cat) : seatNumber(num), isBooked(false), category(cat) {
+        price = (category == "Premium") ? 15.99 : 10.99;
+    }
+    bool book() {
+        if (!isBooked) {
+            isBooked = true;
+            return true;
+        }
+        return false;
+    }
+    bool isAvailable() const { return !isBooked; }
+    int getNumber() const { return seatNumber; }
+    string getCategory() const { return category; }
+    double getPrice() const { return price; }
+};
+
+class Theater {
+private:
+    vector<Seat> seats;
+    static const int ROWS = 5;
+    static const int COLS = 10;
+public:
+    Theater() {
+        for (int i = 1; i <= ROWS * COLS; i++) {
+            string category = (i <= COLS * 2) ? "Premium" : "Standard";
+            seats.push_back(Seat(i, category));
+        }
+    }
+
+    void displaySeats() const {
+        cout << "\nScreen this way\n";
+        cout << string(40, '-') << endl;
+        cout << "Premium seats: P   Standard seats: S\n";
+        
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                int seatIndex = i * COLS + j;
+                if (seats[seatIndex].isAvailable()) {
+                    cout << " " << seats[seatIndex].getCategory()[0] << setw(2) << seats[seatIndex].getNumber() << " ";
+                } else {
+                    cout << " XX  ";
+                }
+            }
+            cout << endl;
+        }
+        cout << "\nPrices - Premium: $15.99, Standard: $10.99\n";
+    }
+
+    bool bookSeat(int seatNum) {
+        if (seatNum < 1 || seatNum > ROWS * COLS) {
+            return false;
+        }
+        return seats[seatNum - 1].book();
+    }
+
+    double getSeatPrice(int seatNum) {
+        if (seatNum < 1 || seatNum > ROWS * COLS) {
+            return 0.0;
+        }
+        return seats[seatNum - 1].getPrice();
+    }
+};
+
+int getIntInput(const string& prompt) {
+    int input;
+    while (true) {
+        cout << prompt;
+        if (cin >> input) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return input;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a number.\n";
+    }
+}
+
+int main() {
+    Theater theater;
+    double totalAmount = 0;
+    int choice;
+
+    do {
+        cout << "\n1. View Seat Availability\n"
+             << "2. Book a Seat\n"
+             << "3. View Total\n"
+             << "4. Exit\n";
+        
+        choice = getIntInput("Enter choice: ");
+
+        switch (choice) {
+            case 1:
+                theater.displaySeats();
+                break;
+
+            case 2: {
+                theater.displaySeats();
+                int seatNum = getIntInput("Enter seat number to book: ");
+                if (theater.bookSeat(seatNum)) {
+                    cout << "Seat " << seatNum << " booked successfully!\n";
+                    totalAmount += theater.getSeatPrice(seatNum);
+                } else {
+                    cout << "Seat " << seatNum << " is already booked or invalid!\n";
+                }
+                break;
+            }
+
+            case 3:
+                cout << "\n=== TOTAL ===\n";
+                cout << "Ticket total: $ " << fixed << setprecision(2) << totalAmount << endl;
+                break;
+
+            case 4:
+                cout << "Thank you for using our booking system!\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please enter a number between 1 and 4.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
