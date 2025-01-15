@@ -1,1 +1,154 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+void registerUser();
+void loginUser();
+
+struct User 
+{
+    string username;
+    string password;
+};
+
+int main() {
+    int choice;
+  while(true)
+  {
+    cout << "\n\033[1mUSM Extremesuperb Cinemas - Universiti's Leading Cinema Online\033[0m"<<endl;
+    cout << "=============================================================================\n";
+    cout << setw(20)<<"1. Register\n";
+    cout << setw(17)<<"2. Login\n";
+    cout << setw(16)<<"3. Exit\n";
+    cout << "=============================================================================\n";
+    cout << "Choose an option: ";
+    cin >> choice;
+
+    switch (choice) 
+    {
+       case 1:
+        registerUser();
+        break;
+       case 2: 
+        loginUser();
+        break;
+       case 3: 
+        cout << "Exiting..." << endl;
+        return 0;
+       default:
+        cout << "Invalid choice.";
+    }
+
+   if(choice == 1 || choice == 2 ||choice ==3)
+   {
+    break;
+   }
+   else
+   {
+    cout << "Please try again." << endl;
+   }
+  }
+  return 0;
+}
+
+bool usernameNotExists(string a )
+{
+    ifstream userfile("users.txt");
+    string username_list, password_list;
+
+    while (userfile >> username_list >> password_list) {
+        if (username_list == a) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void registerUser() 
+{
+    User new_user;
+    while(true)
+    {
+        cout << "Enter username (no space): ";
+        cin >> new_user.username;
+        
+        if (usernameNotExists(new_user.username)) 
+        {
+         break;
+        } 
+        else
+        {
+        cout << "Username already exists. Please use another username.\n";
+        }
+    }
+    
+    while (true) 
+    {
+        cout << "Enter password (at least 8 characters): ";
+        cin >> new_user.password;
+        
+        if (new_user.password.length() >= 8) 
+        {
+            break;
+        } 
+        else 
+        {
+            cout << "Password too short! Please try again.\n";
+        }
+    }
+
+    ofstream userfile;
+    userfile.open("users.txt", ios::app);
+     if(userfile.fail())
+    {
+        cout << "Error 404(Could not open file for writing.)\n";
+        return;
+    }
+    userfile << new_user.username << " " << new_user.password << endl;
+    cout << "Register successfully. Welcome to \033[1mUSM Extremesuperb Cinemas\033[0m, " << new_user.username << "!\n";
+    userfile.close();
+}
+
+void loginUser()
+{   User user;
+    ifstream userfile;
+    userfile.open("users.txt");
+    string username_list,password_list;
+    bool login = false;
+
+       if(userfile.fail())
+       {
+        cout << "Error 404(Could not open file for writing.)\n";
+        return;
+       }
+
+    while(login == false)
+    {
+     cout << "Enter username: ";
+     cin>> user.username;
+     cout << "Enter password: ";
+     cin >> user.password;
+
+        while (userfile >> username_list >> password_list)
+        {
+            if(username_list == user.username && password_list == user.password)
+            {
+             cout << "Login successful!.Welcome to \033[1mUSM Extremesuperb Cinemas\033[0m, " << user.username << "!\n";
+             login = true;
+             break;
+            }
+            else
+            {
+             cout << "Login failed! Invalid username or password. Please try again.\n" << endl;
+             break;
+            }
+        }
+     
+    }
+    
+    userfile.close();
+}
+
 
