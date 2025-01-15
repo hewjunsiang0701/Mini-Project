@@ -1,1 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+struct Merchandise {
+    string name;
+    double price;
+};
 
+int main() {
+    // Define merchandise
+   vector<Merchandise> inventory = {
+        {"USM T-shirt", 25.00},
+        {"USM Tote Bag", 8.00},
+        {"USM Cap", 15.00}
+    };
+
+    vector<Merchandise> selectedItems;
+    int choice;
+
+    while (true) {
+        // Display inventory
+        cout << "Available Merchandise:\n";
+        for (size_t i = 0; i < inventory.size(); ++i) {
+            cout << i + 1 << ". " << inventory[i].name << "- RM" << fixed << setprecision(2) << inventory[i].price << "\n";
+        }
+       cout << "Select an item by number (or 0 to checkout): ";
+       cin >> choice;
+
+        if (choice == 0) {
+            break; // Exit the loop to checkout
+        } else if (choice > 0 && choice <= inventory.size()) {
+            selectedItems.push_back(inventory[choice - 1]);
+            cout << "You have selected: " << inventory[choice - 1].name << "\n";
+        } else {
+           cout << "Invalid selection. Please try again. ";
+        }
+    }
+
+    // Checkout
+    double total = 0.0;
+    cout << " You have selected the following items:n/";
+    for (const auto& item : selectedItems) {
+        cout << "- " << item.name << "\n";
+        total += item.price;
+    }
+    cout << "Total amount: RM" << fixed << setprecision(2) << total << "\n";
+
+    return 0;
+}
