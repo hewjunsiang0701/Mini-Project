@@ -1,1 +1,130 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+struct Movie {
+    string title;
+    vector<string> showtimes;
+};
+
+struct Booking {
+    string place;
+    string date;
+    Movie selectedMovie;
+    string selectedShowtime;
+    string selectedSeat;
+    string foodPackage;
+    string merchandise;
+};
+
+void displayMovies(const vector<Movie>& movies) {
+    cout << "Available Movies:\n";
+    for (int i = 0; i < movies.size(); ++i) {
+        cout << i + 1 << ". " << movies[i].title << endl;
+    }
+}
+
+void displayShowtimes(const Movie& movie) {
+    cout << "Available Showtimes for \"" << movie.title << "\":\n";
+    for (int i = 0; i < movie.showtimes.size(); ++i) {
+        cout << i + 1 << ". " << movie.showtimes[i] << endl;
+    }
+}
+
+void displayFoodPackages() {
+    cout << "Available Food Packages:\n";
+    cout << "1. Popcorn Combo (Popcorn + Drink)\n";
+    cout << "2. Snack Combo (Nachos + Drink)\n";
+    cout << "3. Full Meal Combo (Burger + Fries + Drink)\n";
+    cout << "4. No Food Package\n";
+}
+
+void displayMerchandise() {
+    cout << "Available Merchandise:\n";
+    cout << "1. USM T-shirt\n";
+    cout << "2. USM cap\n";
+    cout << "3. USM Tote bag\n";
+    cout << "4. No Merchandise\n";
+}
+
+void bookTicket(Booking& booking, const vector<Movie>& movies) {
+    // Select place
+    cout << "Enter your place (Induk, Kejut or Kesit): ";
+    getline(cin, booking.place);
+
+    // Select date
+    cout << "Enter the date of your movie (e.g., 2025-01-06): ";
+    getline(cin, booking.date);
+
+    // Select movie
+    displayMovies(movies);
+    int movieChoice;
+    cout << "Select a movie (1-" << movies.size() << "): ";
+    cin >> movieChoice;
+    cin.ignore(); // To consume the leftover newline
+    booking.selectedMovie = movies[movieChoice - 1];
+
+    // Select showtime
+    displayShowtimes(booking.selectedMovie);
+    int showtimeChoice;
+    cout << "Select a showtime (1-" << booking.selectedMovie.showtimes.size() << "): ";
+    cin >> showtimeChoice;
+    cin.ignore();
+    booking.selectedShowtime = booking.selectedMovie.showtimes[showtimeChoice - 1];
+
+    // Select seat
+    cout << "Enter your selected seat (e.g., A1, B2, C3): ";
+    getline(cin, booking.selectedSeat);
+
+    // Select food package
+    displayFoodPackages();
+    int foodChoice;
+    cout << "Select a food package (1-4): ";
+    cin >> foodChoice;
+    cin.ignore();
+    switch (foodChoice) {
+        case 1: booking.foodPackage = "Popcorn Combo"; break;
+        case 2: booking.foodPackage = "Snack Combo"; break;
+        case 3: booking.foodPackage = "Full Meal Combo"; break;
+        case 4: booking.foodPackage = "No Food Package"; break;
+    }
+
+    // Select merchandise
+    displayMerchandise();
+    int merchandiseChoice;
+    cout << "Select merchandise (1-4): ";
+    cin >> merchandiseChoice;
+    cin.ignore();
+    switch (merchandiseChoice) {
+        case 1: booking.merchandise = "USM T-shirt"; break;
+        case 2: booking.merchandise = "USM cap"; break;
+        case 3: booking.merchandise = "USM Tote bag"; break;
+        case 4: booking.merchandise = "No Merchandise"; break;
+    }
+
+    cout << "\nBooking Summary:\n";
+    cout << "Place: " << booking.place << endl;
+    cout << "Date: " << booking.date << endl;
+    cout << "Movie: " << booking.selectedMovie.title << endl;
+    cout << "Showtime: " << booking.selectedShowtime << endl;
+    cout << "Seat: " << booking.selectedSeat << endl;
+    cout << "Food Package: " << booking.foodPackage << endl;
+    cout << "Merchandise: " << booking.merchandise << endl;
+}
+
+int main() {
+    
+    vector<Movie> movies = {
+        {"Avatar 2", {"10:00 AM", "1:00 PM", "4:00 PM", "7:00 PM"}},
+        {"Spider-Man: No Way Home", {"9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM"}},
+        {"The Batman", {"11:00 AM", "2:00 PM", "5:00 PM", "8:00 PM"}}
+    };
+
+    Booking booking;
+    bookTicket(booking, movies);
+
+    return 0;
+}
 
