@@ -100,7 +100,7 @@ void registerUser()
     }
 
     ofstream userfile;
-    userfile.open("users.txt", ios::app);
+    userfile.open("users.txt");
      if(userfile.fail())
     {
         cout << "Error 404(Could not open file for writing.)\n";
